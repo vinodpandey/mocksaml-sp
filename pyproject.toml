@@ -1,0 +1,15 @@
+[tool.black]
+line-length = 120
+target-version = ['py310']
+
+[tool.isort]
+profile = "black"
+multi_line_output = 3
+py_version = 310
+
+[tool.mypy]
+plugins = ["mypy_django_plugin.main", "mypy_drf_plugin.main"]
+exclude = ['migrations', 'tests', 'factories'] 
+
+[tool.django-stubs]
+django_settings_module = "project.settings"

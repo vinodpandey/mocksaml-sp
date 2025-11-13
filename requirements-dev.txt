@@ -1,0 +1,7 @@
+black==24.2.0
+isort==5.13.2
+flake8==7.0.0
+flake8-comprehensions==3.14.0
+mypy==1.7.1
+django-stubs[compatible-mypy]==4.2.7
+djangorestframework-stubs[compatible-mypy]==3.14.5
