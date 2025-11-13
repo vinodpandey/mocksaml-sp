@@ -12,4 +12,4 @@ plugins = ["mypy_django_plugin.main", "mypy_drf_plugin.main"]
 exclude = ['migrations', 'tests', 'factories'] 
 
 [tool.django-stubs]
-django_settings_module = "project.settings"
+django_settings_module = "settings"
