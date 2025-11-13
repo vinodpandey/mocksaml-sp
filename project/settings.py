@@ -43,7 +43,12 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'home',
-    'accounts'
+    'accounts',
+
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount', 
+    'allauth.socialaccount.providers.saml'
 ]
 
 MIDDLEWARE = [
@@ -54,6 +59,9 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+    # Add the account middleware:
+    "allauth.account.middleware.AccountMiddleware",
 ]
 
 ROOT_URLCONF = 'project.urls'
@@ -130,3 +138,99 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'accounts.User'
+
+AUTHENTICATION_BACKENDS = [
+    # Needed to login by username in Django admin, regardless of `allauth`
+    'django.contrib.auth.backends.ModelBackend',
+
+    # `allauth` specific authentication methods, such as login by email
+    'allauth.account.auth_backends.AuthenticationBackend',
+]
+
+# Allauth Account Settings
+LOGIN_REDIRECT_URL = '/'
+ACCOUNT_USER_MODEL_USERNAME_FIELD = None  # Key fix: No username field exists
+ACCOUNT_USERNAME_REQUIRED = False  # Disable username requirement
+ACCOUNT_EMAIL_REQUIRED = True  # Require email instead
+ACCOUNT_AUTHENTICATION_METHOD = 'email'  # Use email for auth (login with email only)
+
+
+SOCIALACCOUNT_PROVIDERS = {
+    "saml": {
+        # Here, each app represents the SAML provider configuration of one
+        # organization.
+        "APPS": [
+            {
+                # Used for display purposes, e.g. over by: {% get_providers %}
+                    # "name": "Acme Inc",
+                    "name": "Mock Saml",
+                    "domain": "example.com",
+                    # Accounts signed up via this provider will have their
+                    # `SocialAccount.provider` value set to this ID. The combination
+                    # of this value and the `uid` must be unique. The IdP entity ID is a
+                    # good choice for this.
+                    # "provider_id": "urn:dev-123.us.auth0.com",
+                    "provider_id": "https://saml.example.com/entityid",
+
+                    # The organization slug is configured by setting the
+                    # `client_id` value. In this example, the SAML login URL is:
+                    #
+                    #     /accounts/saml/acme-inc/login/
+                    # "client_id": "acme-inc",
+                    "client_id": "mock-saml",
+
+                    # The fields above are common `SocialApp` fields. For SAML,
+                    # additional configuration is needed, which is placed in
+                    # `SocialApp.settings`:
+                    "settings": {
+                        # Mapping account attributes to upstream (IdP specific) attributes.
+                        # If left empty, an attempt will be done to map the attributes using
+                        # built-in defaults.
+                        "attribute_mapping": {
+                            "uid": "id",
+                            "id": "id",
+                            "email": "email",
+                            "first_name": "firstName",
+                            "last_name": "lastName"
+                        },
+
+                        # The configuration of the IdP.
+                        "idp": {
+                                # The entity ID of the IdP is required.
+                                "entity_id": "https://saml.example.com/entityid",
+
+                                # Then, you can either specify the IdP's metadata URL:
+                                # "metadata_url": "https://dev-123.us.auth0.com/samlp/metadata/456",
+
+                                # Or, you can inline the IdP parameters here as follows:
+                                "sso_url": "https://mocksaml.com/api/saml/sso",
+                                "slo_url": "https://mocksaml.com/api/saml/sso",
+                                "x509cert": """
+                                    -----BEGIN CERTIFICATE-----
+                                    MIIC4jCCAcoCCQC33wnybT5QZDANBgkqhkiG9w0BAQsFADAyMQswCQYDVQQGEwJV
+                                    SzEPMA0GA1UECgwGQm94eUhRMRIwEAYDVQQDDAlNb2NrIFNBTUwwIBcNMjIwMjI4
+                                    MjE0NjM4WhgPMzAyMTA3MDEyMTQ2MzhaMDIxCzAJBgNVBAYTAlVLMQ8wDQYDVQQK
+                                    DAZCb3h5SFExEjAQBgNVBAMMCU1vY2sgU0FNTDCCASIwDQYJKoZIhvcNAQEBBQAD
+                                    ggEPADCCAQoCggEBALGfYettMsct1T6tVUwTudNJH5Pnb9GGnkXi9Zw/e6x45DD0
+                                    RuRONbFlJ2T4RjAE/uG+AjXxXQ8o2SZfb9+GgmCHuTJFNgHoZ1nFVXCmb/Hg8Hpd
+                                    4vOAGXndixaReOiq3EH5XvpMjMkJ3+8+9VYMzMZOjkgQtAqO36eAFFfNKX7dTj3V
+                                    pwLkvz6/KFCq8OAwY+AUi4eZm5J57D31GzjHwfjH9WTeX0MyndmnNB1qV75qQR3b
+                                    2/W5sGHRv+9AarggJkF+ptUkXoLtVA51wcfYm6hILptpde5FQC8RWY1YrswBWAEZ
+                                    NfyrR4JeSweElNHg4NVOs4TwGjOPwWGqzTfgTlECAwEAATANBgkqhkiG9w0BAQsF
+                                    AAOCAQEAAYRlYflSXAWoZpFfwNiCQVE5d9zZ0DPzNdWhAybXcTyMf0z5mDf6FWBW
+                                    5Gyoi9u3EMEDnzLcJNkwJAAc39Apa4I2/tml+Jy29dk8bTyX6m93ngmCgdLh5Za4
+                                    khuU3AM3L63g7VexCuO7kwkjh/+LqdcIXsVGO6XDfu2QOs1Xpe9zIzLpwm/RNYeX
+                                    UjbSj5ce/jekpAw7qyVVL4xOyh8AtUW1ek3wIw1MJvEgEPt0d16oshWJpoS1OT8L
+                                    r/22SvYEo3EmSGdTVGgk3x3s+A0qWAqTcyjr7Q4s/GKYRFfomGwz0TZ4Iw1ZN99M
+                                    m0eo2USlSRTVl7QHRTuiuSThHpLKQQ==
+                                    -----END CERTIFICATE-----
+                                """
+                        }
+
+                    }
+            },
+        ]
+    }
+}
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
