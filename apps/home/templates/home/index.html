@@ -8,3 +8,31 @@
     <div><a href="{% url 'account_login' %}">Login</a></div>
     <div><a href="/accounts/saml/mock-saml/login/">Login with SSO</a></div>
 {% endif %}
+
+
+<table border="1" cellpadding="8" cellspacing="0">
+  <thead>
+    <tr>
+      <th>Title</th>
+      <th>URL</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Login</td>
+      <td><a href="/accounts/saml/mock-saml/login/">/accounts/saml/mock-saml/login/</a></td>
+    </tr>
+    <tr>
+      <td>Assertion Consumer Service (ACS)</td>
+      <td><a href="/accounts/saml/mock-saml/acs/">/accounts/saml/mock-saml/acs/</a></td>
+    </tr>
+    <tr>
+      <td>Single Logout Service (SLS)</td>
+      <td><a href="/accounts/saml/mock-saml/sls/">/accounts/saml/mock-saml/sls/</a></td>
+    </tr>
+    <tr>
+      <td>Metadata</td>
+      <td><a href="/accounts/saml/mock-saml/metadata/">/accounts/saml/mock-saml/metadata/</a></td>
+    </tr>
+  </tbody>
+</table>
